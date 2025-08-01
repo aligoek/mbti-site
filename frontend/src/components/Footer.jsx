@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white p-6 mt-12 rounded-t-lg font-inter">
+    <footer className="bg-gray-800 text-white p-6 mt-12  font-inter">
       <div className="container mx-auto text-center md:flex md:justify-between md:items-center">
         <div className="mb-4 md:mb-0">
-          <p>&copy; {new Date().getFullYear()} MBTI Analyser. Tüm Hakları Saklıdır.</p>
+          <p>&copy; {new Date().getFullYear()} MBTI Analyser. All rights reserved.</p>
         </div>
         <div className="flex flex-wrap justify-center space-x-4 mb-4 md:mb-0">
-          <Link to="/privacy" className="hover:text-blue-400 transition duration-300 ease-in-out">Gizlilik Politikası</Link>
-          <Link to="/terms" className="hover:text-blue-400 transition duration-300 ease-in-out">Kullanım Şartları</Link>
-          <Link to="/about-us" className="hover:text-blue-400 transition duration-300 ease-in-out">Hakkımızda</Link>
-          <Link to="/sitemap" className="hover:text-blue-400 transition duration-300 ease-in-out">Site Haritası</Link>
+          <Link to="/privacy" className="hover:text-blue-400 transition duration-300 ease-in-out">Privacy Policy</Link>
+          <Link to="/terms" className="hover:text-blue-400 transition duration-300 ease-in-out">Terms of Service</Link>
+          <Link to="/about-us" className="hover:text-blue-400 transition duration-300 ease-in-out">About Us</Link>
+          {/* Removed Sitemap link as requested */}
         </div>
         <div className="flex justify-center space-x-4">
           {/* Sosyal medya ikonları - Yer Tutucu SVG'ler */}

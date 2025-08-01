@@ -19,26 +19,26 @@ const ContactPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Gerçek bir uygulamada, bu verileri bir backend'e (örn. Firebase Functions) gönderirdiniz
-    console.log('Form gönderildi:', formData);
-    setStatusMessage('Mesajınız için teşekkür ederiz! Yakında size geri döneceğiz.');
-    setFormData({ name: '', email: '', message: '' }); // Formu temizle
-    // Uyarı yerine bir mesaj kutusu simülasyonu
-    setTimeout(() => setStatusMessage(''), 5000); // 5 saniye sonra mesajı temizle
+    // In a real application, you would send this data to a backend (e.g., Firebase Functions)
+    console.log('Form sent:', formData);
+    setStatusMessage('Thank you for your message! We will get back to you soon.');
+    setFormData({ name: '', email: '', message: '' }); // Clear the form
+    // Simulate a message box instead of an alert
+    setTimeout(() => setStatusMessage(''), 5000); // Clear the message after 5 seconds
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 font-inter min-h-screen">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Bize Ulaşın</h1>
+    <div className="container mx-auto px-4 py-12 font-inter min-h-screen">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Contact Us</h1>
 
       <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
         <p className="text-lg text-gray-700 text-center mb-6">
-          Sorularınız, geri bildirimleriniz veya desteğe mi ihtiyacınız var? Aşağıdaki formu doldurun veya doğrudan bize ulaşın.
+          Do you have questions, feedback, or need support? Fill out the form below or reach out to us directly.
         </p>
 
         {statusMessage && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md relative mb-6" role="alert">
-            <strong className="font-bold">Başarılı!</strong>
+            <strong className="font-bold">Success!</strong>
             <span className="block sm:inline ml-2">{statusMessage}</span>
           </div>
         )}
@@ -46,7 +46,7 @@ const ContactPage = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
-              Adınız
+              Your Name
             </label>
             <input
               type="text"
@@ -60,7 +60,7 @@ const ContactPage = () => {
           </div>
           <div>
             <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
-              E-posta Adresiniz
+              Email Address
             </label>
             <input
               type="email"
@@ -74,7 +74,7 @@ const ContactPage = () => {
           </div>
           <div>
             <label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">
-              Mesajınız
+              Your Message
             </label>
             <textarea
               id="message"
@@ -91,18 +91,18 @@ const ContactPage = () => {
               type="submit"
               className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300"
             >
-              Mesaj Gönder
+              Send Message
             </button>
           </div>
         </form>
 
         <div className="mt-10 text-center">
-          <p className="text-lg text-gray-800 font-semibold mb-2">Doğrudan İletişim:</p>
-          <p className="text-blue-600 font-medium">info@mbtianalyser.com</p>
+          <p className="text-lg text-gray-800 font-semibold mb-2">Direct Contact:</p>
+          <a href="mailto:info@mbtianalyser.com" className="text-blue-600 font-medium">info@mbtianalyser.com</a>
         </div>
 
         <div className="mt-8 text-center">
-          <p className="text-lg text-gray-800 font-semibold mb-3">Bizi Takip Edin:</p>
+          <p className="text-lg text-gray-800 font-semibold mb-3">Follow Us:</p>
           <div className="flex justify-center space-x-6">
             <a href="#" className="text-gray-700 hover:text-blue-600 transition duration-300 ease-in-out">
               <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">

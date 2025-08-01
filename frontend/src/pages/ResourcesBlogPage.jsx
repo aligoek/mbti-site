@@ -25,16 +25,16 @@ const ResourcesBlogPage = () => {
 
   const faq = [
     {
-      question: "MBTI bilimsel olarak doğrulanmış mıdır?",
-      answer: "MBTI yaygın olarak kullanılan bir psikolojik araçtır, ancak bilimsel geçerliliği psikoloji camiasında devam eden bir tartışma konusudur. Kendi kendine raporlama içgörüleri ve pratik uygulamaları nedeniyle övülse de, bazı eleştirmenler test-yeniden test güvenilirliği ve öngörücü geçerlilik gibi psikometrik özelliklerini tartışmaktadır. En iyi şekilde kendini anlama ve kişisel gelişim için bir araç olarak görülmelidir, kesin bir bilimsel ölçüm olarak değil. Testlerimiz, kendini keşfetme için güçlü bir gösterge sonucu sağlamayı amaçlamaktadır."
+      question: "Is MBTI scientifically valid?",
+      answer: "MBTI is a widely used psychological tool, but its scientific validity remains a topic of ongoing debate within the psychology community. While it is praised for its self-report insights and practical applications, some critics question its psychometric properties, such as test-retest reliability and predictive validity. It should be viewed as a tool for self-understanding and personal development, rather than a definitive scientific measure. Our tests aim to provide a strong indicator result for self-exploration."
     },
     {
-      question: "MBTI tipim zamanla değişebilir mi?",
-      answer: "MBTI, genellikle zamanla sabit kabul edilen 'tercih ettiğiniz' çalışma şeklinizi belirlemeyi amaçlar. Ancak, yaşam deneyimleri ve kişisel gelişim, tercihlerinizi ifade etme şeklinizde değişikliklere yol açabilir. Temel tipinizin kökten değişmesi pek olası olmasa da, davranışlarınız ve farklı durumlara nasıl uyum sağladığınız gelişebilir."
+      question: "Can my MBTI type change over time?",
+      answer: "MBTI aims to identify your 'preferred' way of working, which is generally considered stable over time. However, life experiences and personal development can lead to changes in how you express your preferences. While it is unlikely that your core type will change fundamentally, your behaviors and how you adapt to different situations may evolve."
     },
     {
-      question: "Online MBTI testleri ne kadar doğrudur?",
-      answer: "Online MBTI testleri, tipiniz hakkında iyi bir fikir verebilir, ancak genellikle resmi, profesyonelce uygulanan MBTI değerlendirmesi kadar kapsamlı veya ayrıntılı değildir. En doğru ve derinlemesine anlayış için, sertifikalı bir uygulayıcı ile resmi değerlendirmeyi almanız önerilir. Testlerimiz, kendini keşfetme için güçlü bir gösterge sonucu sağlamayı amaçlamaktadır."
+      question: "How accurate are online MBTI tests?",
+      answer: "Online MBTI tests can provide a good idea of your type, but they are generally not as comprehensive or detailed as a formal, professionally administered MBTI assessment. For the most accurate and in-depth understanding, it is recommended to take the official assessment with a certified practitioner. Our tests aim to provide a strong indicator result for self-exploration."
     },
   ];
 
@@ -45,26 +45,14 @@ const ResourcesBlogPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 font-inter min-h-screen">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Kaynaklar & Blog</h1>
+    <div className="container mx-auto px-4 py-12 font-inter min-h-screen">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Resources & Blog</h1>
 
-      {/* Blog Yazıları Bölümü */}
-      <section className="mb-12">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-6 text-center md:text-left">Son Makaleler</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {articles.map((article) => (
-            <div key={article.id} className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300 ease-in-out transform hover:-translate-y-1">
-              <h3 className="text-2xl font-semibold text-gray-900 mb-3">{article.title}</h3>
-              <p className="text-gray-700 mb-4">{article.summary}</p>
-              <a href={article.link} className="text-blue-600 hover:underline font-medium">Daha Fazla Oku &rarr;</a>
-            </div>
-          ))}
-        </div>
-      </section>
+      
 
       {/* SSS Bölümü */}
       <section>
-        <h2 className="text-3xl font-semibold text-gray-900 mb-6 text-center md:text-left">Sıkça Sorulan Sorular</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-6 text-center md:text-left">Frequently Asked Questions</h2>
         <div className="space-y-4">
           {faq.map((item, index) => (
             <div key={index} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">

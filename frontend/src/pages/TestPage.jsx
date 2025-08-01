@@ -1,277 +1,234 @@
 // src/pages/TestPage.jsx
 import React, { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import { TestContext } from '../context/TestContext';
 
 const TestPage = () => {
-  const { questions, testProgress, submitAnswer, mbtiResult, setTestProgress, setUserAnswers, setMbtiResult, testText, setTestText, getMbtiPredictionFromBackend } = useContext(TestContext);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedFormat, setSelectedFormat] = useState(null); // 'video', 'audio', 'text', 'image'
-  const [loadingPrediction, setLoadingPrediction] = useState(false); // Tahmin yükleniyor durumu
-  const [predictionError, setPredictionError] = useState(null); // Tahmin hatası durumu
+  const {
+    setMbtiResult,
+    setTestProgress,
+    setUserAnswers,
+    setTestText,
+    testText,
+    getMbtiPredictionFromBackend,
+    getMbtiPredictionFromFile,
+    loading,
+    error
+  } = useContext(TestContext);
+  
+  const [selectedFormat, setSelectedFormat] = useState(null);
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState('');
   const navigate = useNavigate();
 
-  // Test sayfasına girildiğinde test durumunu sıfırla
+  // Reset state when the page is loaded or the format changes
   useEffect(() => {
     setTestProgress(0);
     setUserAnswers([]);
     setMbtiResult(null);
-    setCurrentQuestionIndex(0);
-    setSelectedFormat(null); // Format seçimini sıfırla
-    setTestText(''); // Metin testini sıfırla
-    setPredictionError(null); // Hata mesajını sıfırla
-  }, [setTestProgress, setUserAnswers, setMbtiResult, setTestText]);
+    setTestText('');
+    setFile(null);
+    setFileName('');
+  }, [selectedFormat, setTestProgress, setUserAnswers, setMbtiResult, setTestText]);
 
-  const handleFormatSelect = (format) => {
-    setSelectedFormat(format);
-    setCurrentQuestionIndex(0); // Seçilen format için ilk sorudan başla
-  };
-
-  // Sadece çoktan seçmeli sorular için (video, audio, image)
-  const handleAnswer = (answerValue) => {
-    submitAnswer(questions[currentQuestionIndex].id, answerValue);
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
-    } else {
-      // Tüm sorular cevaplandı, sonuç sayfasına git
-      navigate('/results');
-    }
-  };
-
-  const handleNext = () => {
-    if (currentQuestionIndex < filteredQuestions.length - 1) {
-      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
-    } else {
-      // Son soru ise ve metin testi değilse sonuçlara git
-      if (selectedFormat !== 'text') {
-        navigate('/results');
-      }
-    }
-  };
-
-  const handleBack = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prevIndex => prevIndex - 1);
-    }
-  };
-
-  // Metin testi için tahmin yapma
-  const handleTextTestSubmit = async () => {
-    if (!testText.trim()) {
-      setPredictionError("Lütfen tahmin yapmak için bir metin girin.");
-      return;
-    }
-    setLoadingPrediction(true);
-    setPredictionError(null);
-    const result = await getMbtiPredictionFromBackend(testText);
-    setLoadingPrediction(false);
+  const handlePrediction = async (predictionFunc, ...args) => {
+    const result = await predictionFunc(...args);
     if (result) {
       navigate('/results');
-    } else {
-      setPredictionError("Tahmin alınamadı. Lütfen daha sonra tekrar deneyin.");
     }
   };
 
-  // Seçilen formata göre soruları filtrele
-  const filteredQuestions = questions.filter(q => q.type === selectedFormat);
-  const displayQuestion = filteredQuestions[currentQuestionIndex];
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setFileName(selectedFile.name);
+    }
+  };
 
-  if (!selectedFormat) {
-    return (
-      <div className="container mx-auto px-4 py-8 font-inter min-h-screen">
-        <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">Tercih Ettiğiniz Test Formatını Seçin</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <button
-            onClick={() => handleFormatSelect('video')}
-            className="bg-blue-100 hover:bg-blue-200 transition duration-300 p-6 rounded-xl shadow-lg text-center flex flex-col items-center justify-center transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-300"
-          >
-            <svg className="w-16 h-16 text-blue-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-5 4v-4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H11a1 1 0 01-1-1z"></path>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h10a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"></path>
-            </svg>
-            <span className="text-2xl font-semibold text-gray-800">Video Testi</span>
-          </button>
-          <button
-            onClick={() => handleFormatSelect('audio')}
-            className="bg-green-100 hover:bg-green-200 transition duration-300 p-6 rounded-xl shadow-lg text-center flex flex-col items-center justify-center transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-green-300"
-          >
-            <svg className="w-16 h-16 text-green-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19V6l12-3v13m-6 0v-3l-12 3V9l12-3V19zm0-6.28L9.75 12l.75-.72V19m-6-6.28L3.75 12l.75-.72V19"></path>
-            </svg>
-            <span className="text-2xl font-semibold text-gray-800">Ses Testi</span>
-          </button>
-          <button
-            onClick={() => handleFormatSelect('text')}
-            className="bg-red-100 hover:bg-red-200 transition duration-300 p-6 rounded-xl shadow-lg text-center flex flex-col items-center justify-center transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-red-300"
-          >
-            <svg className="w-16 h-16 text-red-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M12 16h.01"></path>
-            </svg>
-            <span className="text-2xl font-semibold text-gray-800">Metin Testi</span>
-          </button>
-          <button
-            onClick={() => handleFormatSelect('image')}
-            className="bg-yellow-100 hover:bg-yellow-200 transition duration-300 p-6 rounded-xl shadow-lg text-center flex flex-col items-center justify-center transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-yellow-300"
-          >
-            <svg className="w-16 h-16 text-yellow-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            <span className="text-2xl font-semibold text-gray-800">Görsel Testi</span>
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Metin testi formatı için özel render
-  if (selectedFormat === 'text') {
-    return (
-      <div className="container mx-auto px-4 py-8 font-inter min-h-screen">
-        <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">MBTI Testi - Metin Formatı</h2>
-        <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
-          <p className="text-lg text-gray-600 mb-4">Lütfen kişiliğiniz hakkında bilgi veren bir metin girin. Bu bir günlük girişi, bir hikaye veya kendinizi ifade eden herhangi bir yazı olabilir.</p>
-          <textarea
-            className="w-full h-64 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700 resize-y"
-            placeholder="Metninizi buraya girin..."
-            value={testText}
-            onChange={(e) => setTestText(e.target.value)}
-          ></textarea>
-          {predictionError && (
-            <p className="text-red-500 text-sm mt-2">{predictionError}</p>
-          )}
-          <div className="flex justify-center mt-6">
-            <button
-              onClick={handleTextTestSubmit}
-              disabled={loadingPrediction}
-              className={`px-8 py-3 rounded-full font-semibold shadow-md transition duration-300 ease-in-out ${
-                loadingPrediction
-                  ? 'bg-gray-400 text-gray-700 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300'
-              }`}
-            >
-              {loadingPrediction ? 'Tahmin Ediliyor...' : 'MBTI Tipimi Tahmin Et'}
-            </button>
+  // Renders the correct UI based on the selected format
+  const renderTestInterface = () => {
+    switch (selectedFormat) {
+      case 'text':
+        return (
+          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">Text Analysis</h3>
+            <p className="text-lg text-gray-600 mb-4">Please enter a text that provides information about your personality.</p>
+            <textarea
+              className="w-full h-64 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your text here..."
+              value={testText}
+              onChange={(e) => setTestText(e.target.value)}
+            />
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => handlePrediction(getMbtiPredictionFromBackend, testText)}
+                disabled={loading || !testText.trim()}
+                className={`px-8 py-3 rounded-full font-semibold shadow-md transition duration-300 ${loading || !testText.trim() ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+              >
+                {loading ? 'Predicting...' : 'Predict My MBTI Type'}
+              </button>
+            </div>
           </div>
-          <div className="flex justify-center mt-4">
-            <button
-              onClick={() => setSelectedFormat(null)} // Format seçimine geri dön
-              className="text-gray-600 hover:text-gray-800 transition duration-300 ease-in-out text-sm"
-            >
-              Format Seçimine Geri Dön
-            </button>
+        );
+      
+      case 'audio':
+      case 'video':
+      case 'image':
+        const formatDetails = {
+          audio: { title: 'Audio Analysis', accept: 'audio/*', icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1V6a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 1.5v17a1 1 0 01-1.707.707L5.586 15z" />
+            </svg>
+          ) },
+          video: { title: 'Video Analysis', accept: 'video/*', icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          ) },
+          image: { title: 'Image Analysis', accept: 'image/*', icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          ) },
+        };
+        const details = formatDetails[selectedFormat];
+        return (
+          <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
+            <h3 className="text-2xl font-bold text-center text-gray-800 mb-4">{details.title}</h3>
+            <p className="text-lg text-gray-600 mb-6 text-center">Please upload a {selectedFormat} file.</p>
+            <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors duration-200">
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  {details.icon}
+                  <p className="mb-2 text-sm text-gray-500 mt-2"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                  <p className="text-xs text-gray-500">{details.accept.toUpperCase()} files</p>
+              </div>
+              <input id="dropzone-file" type="file" className="hidden" accept={details.accept} onChange={handleFileChange} />
+            </label>
+            {fileName && <p className="text-center text-gray-600 mt-4">Selected file: {fileName}</p>}
+            {error && <p className="text-red-500 text-sm mt-4 text-center">{error}</p>}
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => handlePrediction(getMbtiPredictionFromFile, file)}
+                disabled={!file || loading}
+                className={`px-8 py-3 rounded-full font-semibold shadow-md transition duration-300 ${!file || loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+              >
+                {loading ? 'Analyzing...' : 'Predict My MBTI Type'}
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
-    );
-  }
+        );
+      
+      default:
+        return null;
+    }
+  };
 
-  // Diğer test formatları için render
-  if (!displayQuestion) {
-    return (
-      <div className="container mx-auto px-4 py-8 font-inter text-center min-h-screen">
-        <p className="text-xl text-gray-700">Seçilen format için soru yok veya test tamamlandı.</p>
-        {mbtiResult && (
-          <button
-            onClick={() => navigate('/results')}
-            className="mt-8 bg-blue-600 text-white px-8 py-3 rounded-full text-lg font-semibold shadow-md hover:bg-blue-700 transition duration-300 ease-in-out"
-          >
-            Sonuçları Görüntüle
-          </button>
-        )}
-      </div>
-    );
-  }
-
-  const progressPercentage = ((currentQuestionIndex + 1) / filteredQuestions.length) * 100;
+  const testFormats = [
+    { 
+        name: "Video Analysis", 
+        description: "Provide a video as input and predict MBTI personality type based on the transcribed text from the video.",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        ),
+        color: "from-blue-100 to-blue-200"
+    },
+    { 
+        name: "Audio Analysis", 
+        description: "Provide an audio file as input and predict MBTI personality type based on the transcribed text from the audio.",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1V6a1 1 0 011-1h1.586l4.707-4.707A1 1 0 0112 1.5v17a1 1 0 01-1.707.707L5.586 15z" />
+          </svg>
+        ),
+        color: "from-green-100 to-green-200"
+    },
+    { 
+        name: "Text Analysis", 
+        description: "Provide written text as input and predict MBTI personality type based on the given text.",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+          </svg>
+        ),
+        color: "from-red-100 to-red-200"
+    },
+    { 
+        name: "Image Analysis", 
+        description: "Provide an image (with text) as input and predict MBTI personality type based on the extracted text from the image.",
+        icon: (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        ),
+        color: "from-yellow-100 to-yellow-200"
+    }
+  ];
 
   return (
-    <div className="container mx-auto px-4 py-8 font-inter min-h-screen">
-      <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">MBTI Testi - {selectedFormat.charAt(0).toUpperCase() + selectedFormat.slice(1)} Formatı</h2>
+    <div className="container mx-auto px-4 py-12 font-inter min-h-screen bg-gray-50">
+      <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-10 leading-tight">
+        {selectedFormat ? 'Start Your Personality Analysis' : 'Choose Your Analysis Method'}
+      </h1>
+      <p className="text-xl text-center text-gray-700 mb-12 max-w-3xl mx-auto">
+        Select the format that best suits you to begin your journey of self-discovery.
+      </p>
 
-      {/* İlerleme Çubuğu */}
-      <div className="w-full bg-gray-200 rounded-full h-4 mb-8">
-        <div
-          className="bg-blue-600 h-4 rounded-full transition-all duration-500 ease-out"
-          style={{ width: `${progressPercentage}%` }}
-        ></div>
-      </div>
-
-      {/* Soru Kartı */}
-      <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 max-w-2xl mx-auto">
-        <p className="text-lg text-gray-600 mb-4">Soru {currentQuestionIndex + 1} / {filteredQuestions.length}</p>
-        <h3 className="text-2xl font-semibold text-gray-900 mb-6">{displayQuestion.question}</h3>
-
-        {/* Medya (video, ses, görsel) */}
-        {displayQuestion.type === 'video' && displayQuestion.videoUrl && (
-          <div className="mb-6 rounded-lg overflow-hidden shadow-md">
-            <video controls className="w-full h-auto">
-              <source src={displayQuestion.videoUrl} type="video/mp4" />
-              Tarayıcınız video etiketini desteklemiyor.
-            </video>
+      {!selectedFormat ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto">
+            {testFormats.map((format, index) => (
+              <button 
+                key={index}
+                onClick={() => setSelectedFormat(format.name.split(' ')[0].toLowerCase())} 
+                className={`bg-gradient-to-br ${format.color} p-6 rounded-xl shadow-lg transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300 ease-in-out flex flex-col items-center justify-center text-center`}
+              >
+                <div className="mb-4">
+                  {format.icon}
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{format.name}</h3>
+                <p className="text-gray-700 text-sm">{format.description}</p>
+              </button>
+            ))}
           </div>
-        )}
-        {displayQuestion.type === 'audio' && displayQuestion.audioUrl && (
-          <div className="mb-6">
-            <audio controls className="w-full">
-              <source src={displayQuestion.audioUrl} type="audio/mpeg" />
-              Tarayıcınız ses öğesini desteklemiyor.
-            </audio>
-          </div>
-        )}
-        {displayQuestion.type === 'image' && displayQuestion.imageUrl && (
-          <div className="mb-6 flex justify-center">
-            <img
-              src={displayQuestion.imageUrl}
-              alt="Test Görseli"
-              className="max-w-full h-auto rounded-lg shadow-md"
-              onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/400x200/CCCCCC/000000?text=Resim+Yukleme+Hatasi"; }}
-            />
-          </div>
-        )}
 
-        {/* Seçenekler */}
-        <div className="space-y-4">
-          {displayQuestion.options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleAnswer(option.value)}
-              className="w-full text-left bg-gray-50 hover:bg-blue-100 border border-gray-200 text-gray-800 py-3 px-5 rounded-lg shadow-sm transition duration-200 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-blue-400"
+          {/* New section for benefits and model explanation */}
+          <section className="my-16 bg-gradient-to-br from-purple-100 to-blue-100 p-10 rounded-xl shadow-lg text-center max-w-5xl mx-auto">
+            <h2 className="text-4xl font-bold text-gray-800 mb-6">Unlock Deeper Self-Understanding</h2>
+            <p className="text-xl text-gray-700 mb-8">
+              Our advanced MBTI Analyser goes beyond traditional questionnaires. By leveraging cutting-edge AI, we provide a more nuanced and objective assessment of your personality based on your unique linguistic patterns. Discover insights that empower personal growth, improve relationships, and guide your career path.
+            </p>
+            <Link 
+              to="/model" 
+              className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 shadow-md transition duration-300 ease-in-out transform hover:scale-105"
             >
-              {option.text}
+              Learn More About Our AI Model
+              <svg className="ml-2 -mr-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+              </svg>
+            </Link>
+          </section>
+        </>
+      ) : (
+        <div>
+          {renderTestInterface()}
+          <div className="flex justify-center mt-8">
+            <button 
+              onClick={() => setSelectedFormat(null)} 
+              className="text-blue-600 hover:underline font-medium flex items-center gap-1 transition-colors duration-300"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+              </svg>
+              Select a different format
             </button>
-          ))}
+          </div>
         </div>
-
-        {/* Navigasyon Butonları */}
-        <div className="flex justify-between mt-8">
-          <button
-            onClick={handleBack}
-            disabled={currentQuestionIndex === 0}
-            className={`px-6 py-3 rounded-full font-semibold transition duration-300 ease-in-out ${
-              currentQuestionIndex === 0
-                ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
-                : 'bg-gray-200 text-gray-800 hover:bg-gray-300 shadow-md'
-            }`}
-          >
-            Geri
-          </button>
-          {currentQuestionIndex < filteredQuestions.length - 1 ? (
-            <button
-              onClick={handleNext}
-              className="bg-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300"
-            >
-              İleri
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate('/results')}
-              className="bg-purple-600 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-purple-700 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-purple-300"
-            >
-              Sonuçları Görüntüle
-            </button>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

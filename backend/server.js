@@ -3,72 +3,108 @@ const express = require('express');
 const cors = require('cors');
 const { spawn } = require('child_process');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
 const app = express();
-const port = 5000; // Backend sunucusunun çalışacağı port
+const port = 5000;
 
-// Middleware'ler
-// CORS: Frontend'in farklı bir portta çalışması durumunda çapraz kaynak isteklerine izin verir.
-// Geliştirme aşamasında tüm kaynaklara izin veriyoruz.
 app.use(cors());
-// express.json(): Gelen JSON istek gövdelerini ayrıştırmak için.
 app.use(express.json());
 
-// MBTI tahmini için POST endpoint'i
-app.post('/predict-mbti', (req, res) => {
-  const { text } = req.body; // Frontend'den gelen metin verisi
+// --- File Upload Configuration (Multer) ---
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
-  // Metin boşsa hata döndür
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadsDir),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`),
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    // Accept audio, video, and image files
+    if (file.mimetype.startsWith('audio/') || file.mimetype.startsWith('video/') || file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only audio, video, and image files are allowed.'), false);
+    }
+  },
+});
+
+// --- Prediction Endpoints ---
+
+// Endpoint for TEXT-based prediction
+app.post('/predict-mbti', (req, res) => {
+  const { text } = req.body;
   if (!text) {
-    return res.status(400).json({ error: 'Text input is required for MBTI prediction.' });
+    return res.status(400).json({ error: 'Text input is required.' });
+  }
+  const pythonProcess = spawn('python', [path.join(__dirname, 'pred.py'), '--text', text]);
+  handlePythonProcess(pythonProcess, res);
+});
+
+// Endpoint for FILE-based (Audio/Video/Image) prediction
+app.post('/predict-from-file', upload.single('file'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded.' });
   }
 
-  // Python betiğinin yolu
-  // server.js dosyasının backend klasörü içinde olduğunu varsayıyoruz.
-  const pythonScriptPath = path.join(__dirname, 'pred.py');
+  const filePath = req.file.path;
+  const mimeType = req.file.mimetype;
+  let fileTypeArg; // Argument for the python script, e.g., --video
 
-  // Python betiğini ayrı bir süreç olarak başlat
-  // Metni komut satırı argümanı olarak Python betiğine iletiyoruz.
-  const pythonProcess = spawn('python', [pythonScriptPath, text]);
+  if (mimeType.startsWith('video/')) {
+    fileTypeArg = '--video';
+  } else if (mimeType.startsWith('audio/')) {
+    fileTypeArg = '--audio';
+  } else if (mimeType.startsWith('image/')) {
+    fileTypeArg = '--image';
+  } else {
+    // This case should be blocked by fileFilter, but as a fallback:
+    fs.unlinkSync(filePath); // Clean up the invalid file
+    return res.status(400).json({ error: 'Unsupported file type.' });
+  }
 
+  const pythonProcess = spawn('python', [path.join(__dirname, 'pred.py'), fileTypeArg, filePath]);
+  handlePythonProcess(pythonProcess, res, filePath);
+});
+
+// --- Helper Function to Handle Python Subprocess ---
+function handlePythonProcess(pythonProcess, res, filePathToDelete = null) {
   let predictionResult = '';
   let errorOutput = '';
 
-  // Python betiğinden gelen standart çıktıyı (stdout) yakala
   pythonProcess.stdout.on('data', (data) => {
     predictionResult += data.toString();
   });
 
-  // Python betiğinden gelen hata çıktısını (stderr) yakala
   pythonProcess.stderr.on('data', (data) => {
     errorOutput += data.toString();
+    console.error(`Python stderr: ${data}`);
   });
 
-  // Python süreci kapandığında
   pythonProcess.on('close', (code) => {
-    if (code !== 0) {
-      // Eğer Python betiği hata koduyla çıkarsa
-      console.error(`Python script exited with code ${code}`);
-      console.error(`Error output from Python script: ${errorOutput}`);
-      return res.status(500).json({ error: 'Failed to get MBTI prediction from backend.', details: errorOutput });
+    if (filePathToDelete && fs.existsSync(filePathToDelete)) {
+      fs.unlinkSync(filePathToDelete);
     }
-
-    // Python betiği sadece tahmin edilen MBTI tipini yazdıracak şekilde güncellendiği için,
-    // çıktıyı doğrudan kullanabiliriz.
-    const predictedMBTI = predictionResult.trim(); // Boşlukları temizle
-
-    // Tahmin edilen MBTI tipini frontend'e JSON olarak gönder
-    res.json({ mbtiType: predictedMBTI });
+    if (code !== 0) {
+      return res.status(500).json({ error: 'Failed to get MBTI prediction.', details: errorOutput });
+    }
+    res.json({ mbtiType: predictionResult.trim() });
   });
 
-  // Python sürecini başlatırken bir hata oluşursa
   pythonProcess.on('error', (err) => {
-    console.error('Failed to start Python subprocess:', err);
-    res.status(500).json({ error: 'Failed to start backend prediction process.', details: err.message });
+    if (filePathToDelete && fs.existsSync(filePathToDelete)) {
+      fs.unlinkSync(filePathToDelete);
+    }
+    res.status(500).json({ error: 'Failed to start prediction process.', details: err.message });
   });
-});
+}
 
-// Sunucuyu başlat
 app.listen(port, () => {
   console.log(`Backend server running on http://localhost:${port}`);
 });

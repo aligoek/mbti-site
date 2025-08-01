@@ -3,67 +3,67 @@ import React from 'react';
 
 const AboutMBTIPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8 font-inter min-h-screen">
-      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">Myers-Briggs Tip Göstergesi (MBTI) Hakkında</h1>
+    <div className="container mx-auto px-4 py-12 font-inter min-h-screen">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-10">About Myers-Briggs Type Indicator (MBTI)</h1>
 
       <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-8">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-4">MBTI Nedir?</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">What is MBTI?</h2>
         <p className="text-lg text-gray-700 leading-relaxed">
-          Myers-Briggs Tip Göstergesi (MBTI), insanların dünyayı nasıl algıladıkları ve kararlarını nasıl verdikleri konusundaki farklı psikolojik tercihleri belirtmek için tasarlanmış bir öz bildirim anketidir. II. Dünya Savaşı sırasında Isabel Myers ve Katharine Briggs tarafından geliştirilen bu gösterge, Carl Jung'un psikolojik tipler hakkındaki kavramsal teorisine dayanmaktadır. MBTI, Jung'un psikolojik tipler teorisini anlaşılır ve insanların yaşamlarında faydalı hale getirmeyi amaçlar.
+          Myers-Briggs Type Indicator (MBTI) is a self-report questionnaire designed to indicate psychological preferences in how people perceive the world and make decisions. Developed by Isabel Myers and Katharine Briggs during World War II, this indicator is based on Carl Jung's conceptual theory of psychological types. MBTI aims to make Jung's theory of psychological types understandable and useful in people's lives.
         </p>
         <p className="text-lg text-gray-700 leading-relaxed mt-4">
-          Genellikle kendini keşfetme, kariyer geliştirme, ekip oluşturma ve kişilerarası ilişkileri geliştirme için kullanılır. Yaygın olarak kullanılsa da, MBTI'nin kişiliği kesin bir ölçüsü değil, bir kendini anlama aracı olduğunu unutmamak önemlidir.
+          It is commonly used for self-discovery, career development, team building, and improving interpersonal relationships. While it is widely used, it is important to remember that MBTI is not a definitive measure of personality but a tool for self-understanding.
         </p>
       </div>
 
       <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-8">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-4">MBTI'ın Tarihi</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">History of MBTI</h2>
         <p className="text-lg text-gray-700 leading-relaxed">
-          MBTI, II. Dünya Savaşı sırasında Isabel Myers ve Katharine Briggs tarafından oluşturuldu. İnsanların bilgiyi işleme ve karar verme biçimlerinde farklılıklar olduğunu gözlemlediler ve bu farklılıkları anlamalarına yardımcı olacak bir araç yaratmak istediler. Çalışmaları, Carl Jung'un özellikle "Psikolojik Tipler" adlı kitabındaki teorilerinden ilham aldı. MBTI'nin ilk el kitabı 1962'de yayımlandı ve o zamandan beri birkaç revizyon ve güncelleme geçirdi.
+          The MBTI was created by Isabel Myers and Katharine Briggs during World War II. They observed that people had different ways of processing information and making decisions, and they wanted to create a tool to help understand these differences. Their work was inspired by Carl Jung's theories, particularly those in his book "Psychological Types." The first manual for the MBTI was published in 1962, and it has undergone several revisions and updates since then.
         </p>
       </div>
 
       <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200 mb-8">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-4">Dört İkilem</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">Four Dichotomies</h2>
         <p className="text-lg text-gray-700 leading-relaxed mb-6">
-          MBTI, kişiliği dört ikileme göre 16 tipe ayırır:
+          MBTI categorizes personality into 16 types based on four dichotomies:
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">1. Dışa Dönüklük (E) / İçe Dönüklük (I)</h3>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">1. Extraversion (E) / Introversion (I)</h3>
             <p className="text-gray-700">
-              Enerjinizi nereye odakladığınız. Dışa dönükler sosyal etkileşimle enerji kazanırken, içe dönükler yalnızlık ve düşünme ile enerji kazanırlar.
+              Where you focus your energy. Extraverts gain energy from social interaction, while introverts recharge through solitude and reflection.
             </p>
           </div>
           <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">2. Algılama (S) / Sezgi (N)</h3>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">2. Sensing (S) / Intuition (N)</h3>
             <p className="text-gray-700">
-              Bilgiyi nasıl algıladığınız. Algılayıcılar somut gerçeklere ve ayrıntılara odaklanırken, Sezgisel olanlar kalıplara, olasılıklara ve soyut kavramlara odaklanırlar.
+              How you perceive information. Sensors focus on concrete facts and details, while Intuitives focus on patterns, possibilities, and abstract concepts.
             </p>
           </div>
           <div className="p-4 bg-red-50 rounded-lg border border-red-200">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">3. Düşünme (T) / Hissetme (F)</h3>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">3. Thinking (T) / Feeling (F)</h3>
             <p className="text-gray-700">
-              Kararları nasıl verdiğiniz. Düşünenler mantık ve objektifliği önceliklendirirken, Hissedenler değerleri, uyumu ve insanlar üzerindeki etkiyi önceliklendirirler.
+              How you make decisions. Thinkers prioritize logic and objectivity, while Feelers prioritize values, harmony, and the impact on people.
             </p>
           </div>
           <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-2">4. Yargılama (J) / Algılama (P)</h3>
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">4. Judging (J) / Perceiving (P)</h3>
             <p className="text-gray-700">
-              Dış yaşamınızı nasıl yaşamayı tercih ettiğiniz. Yargılayanlar planlı ve düzenli bir yaklaşımı tercih ederken, Algılayanlar esnekliği ve spontanlığı tercih ederler.
+              How you prefer to live your outer life. Judgers prefer a planned and organized approach, while Perceivers prefer flexibility and spontaneity.
             </p>
           </div>
         </div>
       </div>
 
       <div className="bg-white p-8 rounded-xl shadow-lg border border-gray-200">
-        <h2 className="text-3xl font-semibold text-gray-900 mb-4">Gerçek Dünya Kullanımları ve Faydaları</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 mb-4">Real-World Applications and Benefits</h2>
         <ul className="list-disc list-inside text-lg text-gray-700 leading-relaxed space-y-2">
-          <li><strong>Kişisel Gelişim:</strong> Öz farkındalık kazanın, güçlü yönlerinizi anlayın ve gelişim alanlarını belirleyin.</li>
-          <li><strong>Kariyer Rehberliği:</strong> Doğal tercihlerinize ve yeteneklerinize uygun kariyer yollarını keşfedin.</li>
-          <li><strong>İlişki Geliştirme:</strong> Farklı iletişim tarzlarını anlayın ve başkalarıyla daha güçlü bağlantılar kurun.</li>
-          <li><strong>Ekip Oluşturma:</strong> Farklı çalışma tarzlarını ve katkılarını takdir ederek ekip dinamiklerini geliştirin.</li>
-          <li><strong>Çatışma Çözümü:</strong> Temel kişilik farklılıklarını anlayarak anlaşmazlıkları çözmeyi öğrenin.</li>
+          <li><strong>Personal Development:</strong> Gain self-awareness, understand your strengths, and identify areas for growth.</li>
+          <li><strong>Career Guidance:</strong> Explore career paths that align with your natural preferences and talents.</li>
+          <li><strong>Relationship Building:</strong> Understand different communication styles and foster stronger connections with others.</li>
+          <li><strong>Team Building:</strong> Enhance team dynamics by appreciating diverse working styles and contributions.</li>
+          <li><strong>Conflict Resolution:</strong> Learn to resolve disagreements by understanding fundamental personality differences.</li>
         </ul>
       </div>
     </div>

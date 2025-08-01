@@ -16,7 +16,10 @@ import PersonalityTypesPage from './pages/PersonalityTypesPage';
 import PersonalityDetailPage from './pages/PersonalityDetailPage';
 import ResourcesBlogPage from './pages/ResourcesBlogPage';
 import ContactPage from './pages/ContactPage';
-import PlaceholderPage from './pages/PlaceholderPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'; // Import new Privacy Policy Page
+import TermsOfServicePage from './pages/TermsOfServicePage'; // Import new Terms of Service Page
+import AboutUsPage from './pages/AboutUsPage'; // Import new About Us Page
+import ModelPage from './pages/ModelPage'; 
 
 function App() {
   return (
@@ -24,7 +27,9 @@ function App() {
       <TestProvider>
         <div className="flex flex-col min-h-screen bg-gray-50">
           <Navbar />
-          <main className="flex-grow">
+          {/* Added 'pt-16' to the main element to create space for the fixed Navbar.
+              This padding pushes the content down so it doesn't get hidden behind the navbar. */}
+          <main className="flex-grow pt-16">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/test" element={<TestPage />} />
@@ -34,10 +39,11 @@ function App() {
               <Route path="/types/:typeId" element={<PersonalityDetailPage />} />
               <Route path="/resources" element={<ResourcesBlogPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" />} />
-              <Route path="/terms" element={<PlaceholderPage title="Terms of Use" />} />
-              <Route path="/about-us" element={<PlaceholderPage title="About Us" />} />
-              <Route path="/sitemap" element={<PlaceholderPage title="Sitemap" />} />
+              <Route path="/model" element={<ModelPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} /> {/* Use new Privacy Policy Page */}
+              <Route path="/terms" element={<TermsOfServicePage />} /> {/* Use new Terms of Service Page */}
+              <Route path="/about-us" element={<AboutUsPage />} /> {/* Use new About Us Page */}
+              {/* Removed sitemap route as requested */}
             </Routes>
           </main>
           <Footer />
